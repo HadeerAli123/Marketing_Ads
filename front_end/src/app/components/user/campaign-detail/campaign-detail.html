@@ -1,0 +1,66 @@
+<div [ngClass]="getTheme(currentType || '')">
+  <div class="campaign-container" [ngClass]="theme">
+    <h2 class="main-title">{{ product?.name || 'No Title' }}</h2>
+<div class="image-slider" *ngIf="product?.imageUrls?.length">
+  <button class="slider-btn left" (click)="prevSlide()">‹</button>
+
+  <div class="slider-wrapper">
+    <img
+    *ngFor="let imgUrl of product?.imageUrls; let i = index"
+    [src]="imgUrl"
+    alt="Product Image"
+    class="gallery-image"
+    [class.active]="i === currentSlide"
+  />
+    <div class="hotel-name-overlay">
+      {{ product?.name || 'Product Name' }}
+    </div>
+  </div>
+
+  <button class="slider-btn right" (click)="nextSlide()">›</button>
+</div>
+
+    <!-- وصف المنتج -->
+    <div class="description">
+      <p class="title">{{ product?.name || 'No Title' }}</p>
+      <p>{{ product?.description || 'No Description' }}</p>
+    </div>
+
+    <div class="buttons" *ngIf="product">
+  <button *ngIf="availableDetailTypes.includes('phone')" (click)="openCall()" class="btn">
+    <i class="fas fa-phone"></i> اتصال
+  </button>
+  <button *ngIf="availableDetailTypes.includes('whatsapp')" (click)="openWhatsapp()" class="btn">
+    <i class="fab fa-whatsapp"></i> واتساب
+  </button>
+  <button *ngIf="availableDetailTypes.includes('instagram')" (click)="openInstagram()" class="btn">
+    <i class="fab fa-instagram"></i> انستجرام
+  </button>
+  <button *ngIf="availableDetailTypes.includes('website')" (click)="openLocation()" class="btn">
+    <i class="fas fa-map-marker-alt"></i> الموقع
+  </button>
+</div>
+
+
+    <div class="footer-section">
+      <div class="footer-container">
+        <img [src]="getFooterImage()" alt="Customer Support" class="footer-image" />
+        <div class="footer-contact-text">
+          <a href="tel:0096567772030" class="footer-phone">0096567772030</a>
+          <p class="footer-dark-text">
+            <img src="assets/customer-support.png" alt="Call Icon" class="call-icon">
+            تواصل معنا<br>بخدمتكم على مدار الساعة
+          </p>
+        </div>
+      </div>
+      <h3 class="footer_title">{{ getFooterTitle() }}</h3>
+      <div class="footer-social">
+        <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#" target="_blank"><i class="fab fa-whatsapp"></i></a>
+      </div>
+      <div class="copy_right"><p>© 2025 جميع الحقوق محفوظة</p></div>
+    </div>
+  </div>
+</div>
