@@ -461,3 +461,77 @@ background-color: #1f2c2c;  /* أو #1a2424 */
   flex-wrap: wrap;
  
 }
+/* تنسيق إعلان */
+.ad-card {
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ad-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #1c1e2c;
+}
+
+.ad-dates, .ad-price {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* تفاصيل الشركة */
+.company-box {
+  margin-top: 30px;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+.company-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.company-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  padding: 5px;
+  border: 1px solid #ddd;
+}
+
+.company-info {
+  flex: 1;
+}
+
+.company-info h3 {
+  margin: 0 0 10px 0;
+  font-size: 22px;
+  color: #2e4a2e;
+}
+
+.company-info p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.company-info a {
+  color: #e6ab2c;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.company-info a:hover {
+  text-decoration: underline;
+}
+ 

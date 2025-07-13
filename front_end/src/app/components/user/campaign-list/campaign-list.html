@@ -1,10 +1,11 @@
-<div [ngClass]="getTheme(adDetails?.type || '')">
+<div [ngClass]="getTheme(adDetails?.type || 'default')">
   <div class="campaign-list" dir="rtl">
-   
+    <!-- Error Message -->
     <div class="error-message" *ngIf="errorMessage">
       <p>{{ errorMessage }}</p>
     </div>
 
+    <!-- Main Banner -->
     <div class="main-banner">
       <img [src]="getBannerImage()" alt="Main Banner" class="banner-image" />
       <div class="banner-text">
@@ -13,57 +14,86 @@
       </div>
     </div>
     <div class="main-title">{{ getMainTitle() }}</div>
-    
-    <div class="ad-details" *ngIf="adDetails && company">
-      <h2>{{ adDetails.name }}</h2>
-      <p>الشركة: {{ company.name }}</p>
-      <p>من: {{ adDetails.start_date }} إلى: {{ adDetails.end_date }}</p>
-      <p>السعر اليومي: {{ adDetails.amount_per_day }}</p>
-    </div>
-    <div class="rooms-title">{{ getRoomsTitle() }}</div>
 
-    <div class="gallery" dir="rtl">
-      
-      <div class="error-message" *ngIf="errorMessage">
-        <p>{{ errorMessage }}</p>
+    <div class="ad-details" *ngIf="adDetails; else noAdDetails">
+  <div class="ad-card">
+    <!-- عنوان الإعلان -->
+    <h2 class="ad-title">{{ adDetails.name }}</h2>
+
+    <!-- التاريخ -->
+    <p class="ad-dates">
+      <span>من:</span> {{ adDetails.start_date }}
+      <span>إلى:</span> {{ adDetails.end_date }}
+    </p>
+
+    <!-- السعر اليومي -->
+    <p class="ad-price">
+      السعر اليومي: <strong>{{ adDetails.amount_per_day }}</strong>
+    </p>
+
+    <!-- بيانات الشركة -->
+    <div class="company-box" *ngIf="company; else noCompany">
+      <div class="company-header">
+        <!-- لوجو الشركة -->
+        <img *ngIf="company.logo" [src]="company.logo" alt="{{ company.name }} logo" class="company-logo" />
+
+        <!-- معلومات الشركة -->
+        <div class="company-info">
+          <h3>{{ company.name }}</h3>
+          <p *ngIf="company.url">
+            🌐 <a [href]="company.url" target="_blank">زيارة الموقع</a>
+          </p>
+          <p *ngIf="company.phone"> {{ company.phone }}</p>
+          <p *ngIf="company.description">{{ company.description }}</p>
+        </div>
       </div>
+    </div>
 
-  
-      <div *ngFor="let vendor of filteredVendors" class="gallery-card">
-<img [src]="getVendorImage(vendor)" alt="Product image" class="img-fluid" />
-
-
-
-
-        <h4 class="vendor-name">{{ vendor.name || 'اسم المنتج غير متوفر' }}</h4>
-
-       <div class="social-buttons">
-  <ng-container *ngFor="let type of socialTypes">
-    <button
-      *ngIf="shouldShow(type, vendor)"
-      class="btn"
-      (click)="handleSocialClick(vendor, type)"
-    >
-      <i [ngClass]="getIconClass(type)"></i>
-    </button>
-  </ng-container>
-
-  <button class="btn details-btn" (click)="goToDetails(vendor.id, vendor.type)">
-    <i class="fas fa-info-circle"></i> 
-  </button>
+   
+    <ng-template #noCompany>
+      <p>لا توجد بيانات للشركة متاحة.</p>
+    </ng-template>
+  </div>
 </div>
 
+
+<ng-template #noAdDetails>
+  <p>لا توجد تفاصيل للإعلان متاحة.</p>
+</ng-template>
+
+    <!-- Vendors Gallery -->
+    <div class="rooms-title">{{ getRoomsTitle() }}</div>
+    <div class="gallery" dir="rtl">
+      <div *ngIf="filteredVendors.length > 0; else noVendors">
+        <div *ngFor="let vendor of filteredVendors" class="gallery-card">
+          <img [src]="getVendorImage(vendor)" alt="{{ vendor.name || 'صورة المنتج' }}" class="img-fluid" />
+          <h4 class="vendor-name">{{ vendor.name || 'اسم المنتج غير متوفر' }}</h4>
+          <div class="social-buttons">
+            <ng-container *ngFor="let type of socialTypes">
+              <button *ngIf="shouldShow(type, vendor)" class="btn" (click)="handleSocialClick(vendor, type)">
+                <i [ngClass]="getIconClass(type)"></i>
+              </button>
+            </ng-container>
+            <button class="btn details-btn" (click)="goToDetails(vendor.id, vendor.type)">
+              <i class="fas fa-info-circle"></i>
+            </button>
+          </div>
+        </div>
       </div>
+      <ng-template #noVendors>
+        <p>لا توجد منتجات متاحة.</p>
+      </ng-template>
     </div>
 
+    <!-- Footer -->
     <div class="footer-section">
       <div class="footer-container">
         <img [src]="getFooterImage()" alt="Customer Support" class="footer-image" />
         <div class="footer-contact-text">
           <a href="tel:0096567772030" class="footer-phone">0096567772030</a>
           <p class="footer-dark-text">
-            <img src="assets/customer-support.png" alt="Call Icon" class="call-icon">
-            تواصل معنا<br>بخدمتكم على مدار الساعة
+            <img src="assets/customer-support.png" alt="Call Icon" class="call-icon" />
+            تواصل معنا<br />بخدمتكم على مدار الساعة
           </p>
         </div>
       </div>

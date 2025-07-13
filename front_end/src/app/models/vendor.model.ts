@@ -29,6 +29,7 @@ export interface Campaign {
   products?: Product[];
   type?: string;
   company_theme?: string; 
+   company?: Company; 
 }
 
 export interface CampaignStats {
@@ -51,7 +52,7 @@ export interface Product {
   instagram?: string;
   phone?: string;
   snapchat?: string;
-  image: string | string[];  // ✅ لازم كده
+  image: string | string[];  
 
 
   images?: string[];
@@ -60,14 +61,14 @@ export interface Product {
 }
 
 export interface Company {
-  id: string;
+  id: number;
   name: string;
-  logo: string;
-  slug: string;
- description?: string; // ← أضف دي هنا
-
+  url: string | null;
+  description: string | null;
+  logo: string | null;
+  phone: string | null;
+  company_theme: string | null;
 }
-
 export interface Detail {
   product_id: string;
   ads_id: string;

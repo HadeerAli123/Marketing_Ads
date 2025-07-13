@@ -53,7 +53,7 @@ imageUrls: product.image ? product.image.map((img: string) => `${this.apiUrl}/${
             });
           }
         });
-        console.log('✅ الفيندورز المعالجين:', vendors);
+        console.log(' الفيندورز المعالجين:', vendors);
         return vendors;
       }),
       catchError(err => {
@@ -105,39 +105,62 @@ imageUrls: product.image ? product.image.map((img: string) => `${this.apiUrl}/${
       default: return undefined;
     }
   }
-
-  getAdDetails(adId: string): Observable<Campaign | null> {
-    return this.http.get(`${this.apiUrl}/api/ads/${adId}`).pipe(
-      map((response: any) => {
-        console.log(`رد الـ API /api/ads/${adId}:`, response);
-        const ad = response.data;
-        if (!ad) {
-          console.error('مفيش بيانات إعلان في الرد:', response);
-          return null;
-        }
-
-        return {
-          id: ad.id.toString(),
-          name: ad.name,
-          company_id: ad.company_id.toString(),
-          start_date: ad.start_date,
-          end_date: ad.end_date,
-          amount_per_day: parseFloat(ad.amount_per_day),
-          product_ids: JSON.parse(ad.product_ids || '[]'),
-          products: ad.products || [],
-          company_theme: ad.company_theme?.toString(),
-          type: this._categoryToType[ad.company_theme] || 'unknown'
-        } as Campaign;
-      }),
-      catchError(err => {
-        console.error(`خطأ في جلب تفاصيل الإعلان ${adId}:`, err);
-        return of(null);
-      })
-    );
-  }
-
-getCompany(id: string | number): Observable<any> {
-  return this.http.get(`${this.apiUrl}/api/company/${id}`);
+getAdDetails(adId: string): Observable<Campaign | null> {
+  return this.http.get(`${this.apiUrl}/api/ads/${adId}`).pipe(
+    map((response: any) => {
+      console.log(`رد الـ API /api/ads/${adId}:`, response);
+      const ad = response.data;
+      console.log('🧾 Full ad object:', ad);
+      if (!ad) {
+        console.error('مفيش بيانات إعلان في الرد:', response);
+        return null;
+      }
+      // Mapping لتحويل company_id
+      const companyIdMap: { [key: string]: string } = {
+        'company1': '3',
+        'company2': '4',
+        'car_company': '5',
+        'elecr_company': '6',
+        'عقارات': '7',
+        'prh': '8',
+        'uytutuytu': '9'
+      };
+      const companyId = companyIdMap[ad.company_id] || ad.company_id.toString();
+      console.log('🔍 تحويل company_id:', ad.company_id, 'إلى', companyId); 
+      return {
+        id: ad.id.toString(),
+        name: ad.name,
+        company_id: companyId,
+        start_date: ad.start_date,
+        end_date: ad.end_date,
+        amount_per_day: parseFloat(ad.amount_per_day),
+        product_ids: JSON.parse(ad.product_ids || '[]'),
+        products: ad.products || [],
+        company_theme: ad.company_theme?.toString(),
+        type: this._categoryToType[ad.company_theme] || 'unknown'
+      } as Campaign;
+    }),
+    catchError(err => {
+      console.error(`خطأ في جلب تفاصيل الإعلان ${adId}:`, err);
+      return of(null);
+    })
+  );
+}
+getCompany(id: string | number): Observable<Company | null> {
+  console.log(' المعرف اللي رايح للـ getCompany:', id);
+  return this.http.get<{ code: number; message: string; data: Company }>(`${this.apiUrl}/api/company/${id}`).pipe(
+    map(response => {
+      if (response.code === 200 && response.data) {
+        return response.data;
+      }
+      console.warn(`لم يتم العثور على شركة بمعرف ${id}`);
+      return null;
+    }),
+    catchError(err => {
+      console.error(`خطأ في جلب الشركة بمعرف ${id}:`, err);
+      return of(null);
+    })
+  );
 }
 
 

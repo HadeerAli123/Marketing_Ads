@@ -125,7 +125,7 @@ export class CampaignList implements OnInit {
         this.socialDetails[vendor.id] = [];
         this.campaignService.getSocialDetails(vendor.id).subscribe({
           next: (details) => {
-            console.log(`✅ تفاصيل السوشيال للفيندور ${vendor.id}:`, details);
+            console.log(` تفاصيل السوشيال للفيندور ${vendor.id}:`, details);
             this.socialDetails[vendor.id] = details;
           },
           error: (err) => {
@@ -140,25 +140,31 @@ export class CampaignList implements OnInit {
       this.errorMessage = 'لا توجد منتجات متاحة لهذا الإعلان.';
     }
 
-    if (ad?.company_id) {
-      this.campaignService.getCompany(ad.company_id).subscribe({
-        next: (company) => {
-          this.company = company;
-          console.log('🏢 الشركة:', company);
-        },
-        error: (err) => {
-          console.error('خطأ في جلب الشركة:', err);
-          this.company = null;
-        }
-      });
-    } else {
+ if (ad?.company_id) {
+  this.campaignService.getCompany(ad.company_id).subscribe({
+    next: (company) => {
+      this.company = company;
+      console.log(' الشركة:', company);
+      if (!company) {
+        this.errorMessage = 'تعذر تحميل بيانات الشركة. قد لا تكون الشركة متاحة.';
+      }
+    },
+    error: (err) => {
+      console.error('خطأ في جلب الشركة:', err);
       this.company = null;
+      this.errorMessage = 'تعذر تحميل بيانات الشركة. حاولي مرة أخرى لاحقًا.';
     }
+  });
+} else {
+  this.company = null;
+  this.errorMessage = 'لم يتم تحديد معرف الشركة.';
+}
   }
+
 
 getVendorImage(vendor: Vendor): string {
   if (vendor.imageUrls && vendor.imageUrls.length > 0) {
-    console.log('✅ عرض أول صورة:', vendor.imageUrls[0]);
+    console.log(' عرض أول صورة:', vendor.imageUrls[0]);
     return vendor.imageUrls[0];
   }
   return 'assets/default.jpg';
