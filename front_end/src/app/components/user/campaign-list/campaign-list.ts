@@ -31,42 +31,67 @@ export class CampaignList implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.currentAdId = params.get('adId');
-      this.currentType = params.get('type');
-      console.log('معرف الإعلان الحالي:', this.currentAdId, 'الثيم:', this.currentType);
-      this.loadData();
-    });
-  }
+ ngOnInit(): void {
+  this.route.paramMap.subscribe(params => {
+    this.currentAdId = params.get('adId');
+const typeParam = params.get('themeId');
 
-  loadData() {
-    if (this.currentAdId) {
-      this.campaignService.getAdDetails(this.currentAdId).subscribe({
-        next: (ad) => {
+    this.currentType = this.idToTheme[typeParam || ''] || typeParam;
+
+    console.log(' معرّف الإعلان:', this.currentAdId, 'النوع (المعالج):', this.currentType);
+    this.loadData();
+  });
+}
+
+private idToTheme: { [key: string]: string } = {
+  '1': 'electronic_stor',
+  '2': 'hotel',
+  '3': 'car_rental',
+  '4': 'restaurant'
+};
+
+
+ loadData() {
+  if (this.currentAdId && this.currentType) {
+    this.campaignService.getAdDetails(this.currentAdId).subscribe({
+      next: (ad) => {
+        if (ad) {
+       const actualTheme = ad.company_theme?.toString();
+const expectedTheme = this.route.snapshot.paramMap.get('themeId')?.toString();
+
+console.log(' actualTheme:', actualTheme, 'expectedTheme:', expectedTheme);
+
+if (actualTheme !== expectedTheme) {
+  alert('⚠️ الثيم المختار لا يتطابق مع نوع الإعلان. تأكد من صحة الرابط.');
+  this.router.navigate(['/campaigns']);
+  return;
+}
+
+
           this.handleAdResponse(ad);
-        },
-        error: (err) => {
-          console.error('خطأ في جلب تفاصيل الإعلان:', err);
+        } else {
+          this.errorMessage = 'الإعلان غير موجود أو حدث خطأ أثناء التحميل.';
           this.adDetails = null;
-          this.errorMessage = 'تعذر تحميل تفاصيل الإعلان. حاولي مرة أخرى لاحقًا.';
+          this.vendors = [];
+          this.filteredVendors = [];
         }
-      });
-    } else if (this.currentType) {
-      this.campaignService.getAdByTheme(this.currentType).subscribe({
-        next: (ad) => {
-          this.handleAdResponse(ad);
-        },
-        error: (err) => {
-          console.error(`خطأ في جلب الحملة بالثيم ${this.currentType}:`, err);
-          this.adDetails = null;
-          this.errorMessage = 'تعذر تحميل الحملة. حاولي مرة أخرى لاحقًا.';
-        }
-      });
-    } else {
-      this.errorMessage = 'لم يتم تحديد معرف الإعلان أو الثيم.';
-    }
+      },
+      error: (err) => {
+        console.error(' خطأ في جلب تفاصيل الإعلان:', err);
+        this.adDetails = null;
+        this.vendors = [];
+        this.filteredVendors = [];
+        this.errorMessage = 'تعذر تحميل تفاصيل الإعلان. حاولي مرة أخرى لاحقًا.';
+      }
+    });
+  } else {
+    this.errorMessage = 'الرابط غير صحيح. تأكدي من وجود الثيم و ID الإعلان.';
+    this.adDetails = null;
+    this.vendors = [];
+    this.filteredVendors = [];
   }
+}
+
 
   private handleAdResponse(ad: Campaign | null) {
     this.adDetails = ad;
@@ -81,7 +106,7 @@ export class CampaignList implements OnInit {
       
       images = product.images.split(',').map((img: string) => img.trim());
     } catch (e) {
-      console.error('❌ خطأ في تحويل الصور للمنتج:', product.id, product.images);
+      console.error(' خطأ في تحويل الصور للمنتج:', product.id, product.images);
       images = [];
     }
   } else if (Array.isArray(product.images)) {

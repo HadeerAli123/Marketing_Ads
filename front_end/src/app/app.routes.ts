@@ -4,7 +4,7 @@ import { CampaignDetail } from './components/user/campaign-detail/campaign-detai
 
 export const routes: Routes = [
   { path: '', redirectTo: '/campaigns/electronic_stor', pathMatch: 'full' },
-  { path: 'campaigns/:type', component: CampaignList },
-  { path: 'campaigns/:type/:adId', component: CampaignList },
+
+ { path: 'campaigns/:themeId/:adId', component: CampaignList },
   { path: 'product/:id', component: CampaignDetail }
 ];
