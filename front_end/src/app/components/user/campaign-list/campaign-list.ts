@@ -134,7 +134,7 @@ if (actualTheme !== expectedTheme) {
     snapchat: product.snapchat,
     whatsapp: product.whatsapp,
     image: images,
-    imageUrls: images.map((img: string) => `http://127.0.0.1:8000/${img}`),
+    imageUrls: images.map((img: string) => `${img}`),
     campaigns: []
   };
 });
